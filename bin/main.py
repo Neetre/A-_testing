@@ -42,13 +42,16 @@ class Node:
         return self.color == BLACK
     
     def is_start(self):
-        return self.color == TURQUOISE
+        return self.color == ORANGE
     
     def is_end(self):
-        return self.color == PURPLE
+        return self.color == TURQUOISE
     
     def reset(self):
         self.color = WHITE
+        
+    def make_start(self):
+        self.color = ORANGE
         
     def make_closed(self):
         self.color = RED
@@ -58,18 +61,29 @@ class Node:
         
     def make_barrier(self):
         self.color = BLACK
-        
+
     def make_end(self):
-        self.color = PURPLE
+        self.color = TURQUOISE
         
     def make_path(self):
-        self.color = GREY
+        self.color = PURPLE
         
     def draw(self, win):
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
         
     def update_neighbors(self, grid):
-        pass
+        self.neightbors = []
+        if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col ].is_barrier():  # DOWN
+            self.neightbors.append(grid[self.row + 1][self.col])
+
+        elif self.row > 0 and not grid[self.row - 1][self.col ].is_barrier():  # UP
+            self.neightbors.append(grid[self.row - 1][self.col])
+
+        elif self.col < self.total_rows - 1 and not grid[self.row][self.col + 1].is_barrier():  # RIGHT
+            self.neightbors.append(grid[self.row][self.col + 1])
+
+        elif self.row> 0 and not grid[self.row][self.col - 1].is_barrier():  # LEFT
+            self.neightbors.append(grid[self.row][self.col - 1])
     
     def __lt__ (self, other):
         return False
@@ -126,6 +140,43 @@ def main(win, width):
     run = True
     started = False
     while run:
+        draw(win, grid, ROWS, width)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                
+            if started:
+                continue
+            
+            if pygame.mouse.get_pressed()[0]:
+                pos = pygame.mouse.get_pos()
+                row, col = get_clicked_pos(pos, ROWS, width)
+                node = grid[row][col]
+                if not start:
+                    start = node
+                    start.make_start()
+                elif not end and node != start:
+                    end = node
+                    end.make_end()
+                
+                elif node != end and node != start:
+                    node.make_barrier()
+            elif pygame.mouse.get_pressed()[2]:
+                pos = pygame.mouse.get_pos()
+                row, col = get_clicked_pos(pos, ROWS, width)
+                node = grid[row][col]
+                node.reset()
+                if node == start:
+                    node = None
+                elif node == end:
+                    node = None
+                    
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and not started:
+                    pass
+
+    pygame.quit()
+    
+
+if __name__ == "__main__":
+    main(WIN, WIDTH)
