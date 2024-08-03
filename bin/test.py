@@ -47,7 +47,12 @@ def astar(start, goal, graph):
 def heuristic(node, goal):
     # This is a placeholder heuristic function. In a real-world application,
     # this function would calculate the estimated distance from the current node to the goal.
-    return 0
+    
+    node_x, node_y = node
+    goal_x, goal_y = goal
+    distance = abs(node_x - goal_x) + abs(node_y - goal_y)
+    
+    return distance
 
 # Example usage:
 graph = {
