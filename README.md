@@ -39,4 +39,4 @@ This project was inspired by the A* algorithm. The algorithm was first described
 
 ## Author
 
-- [Neetre](https://github.com/Neetre)
+[Neetre](https://github.com/Neetre)
